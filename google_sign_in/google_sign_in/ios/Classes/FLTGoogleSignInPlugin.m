@@ -72,17 +72,12 @@ static FlutterError *getFlutterError(NSError *error) {
       result([FlutterError errorWithCode:@"unsupported-options"
                                  message:@"Games sign in is not supported on iOS"
                                  details:nil]);
-    } else if ([call.arguments objectForKey:@"clientId"]) {
-      [GIDSignIn sharedInstance].clientID = call.arguments[@"clientId"];
-      [GIDSignIn sharedInstance].scopes = call.arguments[@"scopes"];
-      [GIDSignIn sharedInstance].hostedDomain = call.arguments[@"hostedDomain"];
-      result(nil);
     } else {
       NSString *path = [[NSBundle mainBundle] pathForResource:@"GoogleService-Info"
                                                        ofType:@"plist"];
       if (path) {
         NSMutableDictionary *plist = [[NSMutableDictionary alloc] initWithContentsOfFile:path];
-        [GIDSignIn sharedInstance].clientID = plist[kClientIdKey];
+        [GIDSignIn sharedInstance].clientID = [call.arguments objectForKey:@"clientId"] ?? plist[kClientIdKey];
         [GIDSignIn sharedInstance].serverClientID = plist[kServerClientIdKey];
         [GIDSignIn sharedInstance].scopes = call.arguments[@"scopes"];
         [GIDSignIn sharedInstance].hostedDomain = call.arguments[@"hostedDomain"];
